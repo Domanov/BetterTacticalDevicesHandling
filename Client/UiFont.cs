@@ -6,6 +6,8 @@ namespace BetterTacticalDevicesHandling.Client;
 
 internal static class UiFont
 {
+    private const string GameFontName = "Bender";
+
     private static TMP_FontAsset _font;
 
     // The game's UI font (Bender); TMP has no usable default in the game build.
@@ -14,7 +16,7 @@ internal static class UiFont
         if (_font == null)
         {
             TMP_FontAsset[] fonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
-            _font = fonts.FirstOrDefault(f => f.name.Contains("Bender")) ?? fonts.FirstOrDefault();
+            _font = fonts.FirstOrDefault(f => f.name.Contains(GameFontName)) ?? fonts.FirstOrDefault();
         }
 
         return _font;

@@ -10,6 +10,9 @@ namespace BetterTacticalDevicesHandling.Client.Wheel;
 
 internal sealed class WheelTile
 {
+    private const string ImageObjectName = "Image";
+    private const string TextObjectName = "Text";
+
     private static readonly Vector2 Size = new Vector2(170f, 110f);
     private static readonly Color Background = new Color(0f, 0f, 0f, 0.6f);
     private static readonly Color BackgroundSelected = new Color(0.3f, 0.3f, 0.28f, 0.85f);
@@ -67,7 +70,7 @@ internal sealed class WheelTile
 
     private static Image CreateImage(RectTransform parent, Vector2 position, Vector2 size, Color color)
     {
-        GameObject go = new GameObject("Image", typeof(RectTransform), typeof(Image));
+        GameObject go = new GameObject(ImageObjectName, typeof(RectTransform), typeof(Image));
         RectTransform rect = (RectTransform)go.transform;
         rect.SetParent(parent, false);
         rect.sizeDelta = size;
@@ -89,7 +92,7 @@ internal sealed class WheelTile
 
     private static TextMeshProUGUI CreateText(RectTransform parent, TMP_FontAsset font, float fontSize, float height, bool wrap, Vector2 corner, Vector2 offset)
     {
-        GameObject go = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+        GameObject go = new GameObject(TextObjectName, typeof(RectTransform), typeof(TextMeshProUGUI));
         RectTransform rect = (RectTransform)go.transform;
         rect.SetParent(parent, false);
         rect.anchorMin = corner;

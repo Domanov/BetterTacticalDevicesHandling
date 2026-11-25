@@ -13,8 +13,14 @@ namespace BetterTacticalDevicesHandling.Client.Devices;
 // Rule checked against every vanilla device and the modded ones in the Fika install (docs/better-tactical-devices-handling-plan.md).
 internal static class DeviceModes
 {
+    // Game's own (misspelt) field name.
+    private const string ModeTransformsField = "_ligthbeamsTransforms";
+    private const string IndicatorName = "indicator";
+    private const string DumpIndent = "  ";
+    private const string NoModeTransform = "(no mode transform)";
+
     private static readonly AccessTools.FieldRef<TacticalComboVisualController, List<Transform>> ModeTransforms =
-        AccessTools.FieldRefAccess<TacticalComboVisualController, List<Transform>>("_ligthbeamsTransforms");
+        AccessTools.FieldRefAccess<TacticalComboVisualController, List<Transform>>(ModeTransformsField);
 
     // A template always uses the same prefab, so each device type is scanned once per session.
     private static readonly Dictionary<MongoID, DeviceParts[]> Cache = new Dictionary<MongoID, DeviceParts[]>();
@@ -70,7 +76,7 @@ internal static class DeviceModes
     {
         for (; t != null && t != mode; t = t.parent)
         {
-            if (t.name.IndexOf("indicator", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (t.name.IndexOf(IndicatorName, StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return true;
             }
@@ -83,13 +89,13 @@ internal static class DeviceModes
     {
         if (mode == null)
         {
-            return "  (no mode transform)";
+            return DumpIndent + NoModeTransform;
         }
 
         StringBuilder sb = new StringBuilder();
         foreach (Transform t in mode.GetComponentsInChildren<Transform>(true))
         {
-            sb.Append("  ").Append(t.name).Append(':');
+            sb.Append(DumpIndent).Append(t.name).Append(':');
             foreach (Component c in t.GetComponents<Component>())
             {
                 sb.Append(' ').Append(c.GetType().Name);

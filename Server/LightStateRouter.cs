@@ -13,34 +13,45 @@ using SPTarkov.Server.Core.Utils;
 
 namespace BetterTacticalDevicesHandling.Server;
 
+// Route and JSON keys must match Client/Inspect/LightStateStore.cs.
+public static class LightStateJson
+{
+    public const string Route = "/dmnv/bettertacticaldeviceshandling/lights";
+    public const string Items = "items";
+    public const string Id = "id";
+    public const string IsActive = "isActive";
+    public const string Mode = "mode";
+    public const string Failed = "failed";
+}
+
 public record LightState
 {
-    [JsonPropertyName("id")]
-    public string Id { get; init; } = "";
+    [JsonPropertyName(LightStateJson.Id)]
+    public string Id { get; init; } = string.Empty;
 
-    [JsonPropertyName("isActive")]
+    [JsonPropertyName(LightStateJson.IsActive)]
     public bool IsActive { get; init; }
 
-    [JsonPropertyName("mode")]
+    [JsonPropertyName(LightStateJson.Mode)]
     public int Mode { get; init; }
 }
 
 public record LightStateRequest : IRequestData
 {
-    [JsonPropertyName("items")]
+    [JsonPropertyName(LightStateJson.Items)]
     public List<LightState> Items { get; init; } = [];
 }
 
 public record LightStateResponse
 {
-    [JsonPropertyName("failed")]
+    [JsonPropertyName(LightStateJson.Failed)]
     public List<string> Failed { get; init; } = [];
 }
 
 [Injectable]
 public class LightStateRouter(JsonUtil jsonUtil, LightStateService service) : StaticRouter(jsonUtil, [
     new RouteAction<LightStateRequest>(
-        LightStateService.Route,
+        LightStateJson.Route,
         async (_, request, sessionId, _, cancellationToken) => await service.Apply(request, sessionId, cancellationToken))
 ]);
 
@@ -54,8 +65,6 @@ public class LightStateService(
     HttpResponseUtil httpResponseUtil,
     ISptLogger<LightStateService> logger)
 {
-    public const string Route = "/dmnv/bettertacticaldeviceshandling/lights";
-
     public async ValueTask<string> Apply(LightStateRequest request, MongoId sessionId, CancellationToken cancellationToken)
     {
         List<string> failed = [];

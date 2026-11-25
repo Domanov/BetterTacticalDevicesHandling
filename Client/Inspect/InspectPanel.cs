@@ -16,6 +16,15 @@ namespace BetterTacticalDevicesHandling.Client.Inspect;
 // rebuilt whenever the preview model is (re)built, e.g. after a mod is attached in the window.
 internal sealed class InspectPanel : MonoBehaviour
 {
+    private const string CachedLightMasksField = "_cachedLightMasks";
+    private const string PositionedObjectField = "_positionedObject";
+    private const string PanelObjectName = Plugin.Name + " Panel";
+    private const string RowObjectName = "Row";
+    private const string ChipObjectName = "Chip";
+    private const string TextObjectName = "Text";
+    private const string AllOffLabel = "ALL OFF";
+    private const string LockedHint = "Take the weapon in hands to switch";
+
     private static readonly Color PanelBackground = new Color(0f, 0f, 0f, 0.45f);
     private static readonly Color ChipOff = new Color(0.12f, 0.12f, 0.12f, 0.85f);
     private static readonly Color ChipOn = new Color(0.36f, 0.4f, 0.3f, 0.95f);
@@ -26,11 +35,11 @@ internal sealed class InspectPanel : MonoBehaviour
     private static readonly Dictionary<WeaponPreview, InspectPanel> Panels = new Dictionary<WeaponPreview, InspectPanel>();
 
     private static readonly AccessTools.FieldRef<WeaponPreview, List<(Light, int)>> CachedLightMasks =
-        AccessTools.FieldRefAccess<WeaponPreview, List<(Light, int)>>("_cachedLightMasks");
+        AccessTools.FieldRefAccess<WeaponPreview, List<(Light, int)>>(CachedLightMasksField);
 
     // The model root; it is parented under Rotator only after SetPreviewMaskToChildrenLights, where the panel rebuilds.
     private static readonly AccessTools.FieldRef<WeaponPreview, Transform> PositionedObject =
-        AccessTools.FieldRefAccess<WeaponPreview, Transform>("_positionedObject");
+        AccessTools.FieldRefAccess<WeaponPreview, Transform>(PositionedObjectField);
 
     private readonly List<Chip> _chips = new List<Chip>();
     private List<TacticalDevice> _devices = new List<TacticalDevice>();
@@ -93,7 +102,7 @@ internal sealed class InspectPanel : MonoBehaviour
 
     private static InspectPanel Create(Transform parent)
     {
-        GameObject go = new GameObject("Dmnv-BetterTacticalDevicesHandling Panel", typeof(RectTransform), typeof(Image), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
+        GameObject go = new GameObject(PanelObjectName, typeof(RectTransform), typeof(Image), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
         RectTransform rect = (RectTransform)go.transform;
         rect.SetParent(parent, false);
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
@@ -152,7 +161,7 @@ internal sealed class InspectPanel : MonoBehaviour
 
         if (_access == InspectAccess.Locked)
         {
-            Text(Row(), "Take the weapon in hands to switch", 11f, TextOff);
+            Text(Row(), LockedHint, 11f, TextOff);
         }
 
         gameObject.SetActive(true);
@@ -176,7 +185,7 @@ internal sealed class InspectPanel : MonoBehaviour
         foreach (Chip chip in _chips)
         {
             bool lit = chip.Action?.IsLit ?? false;
-            chip.Label.text = chip.Action?.ChipTitle ?? "ALL OFF";
+            chip.Label.text = chip.Action?.ChipTitle ?? AllOffLabel;
             chip.Label.color = _access == InspectAccess.Locked ? TextLocked : lit ? TextOn : TextOff;
             chip.Background.color = lit ? ChipOn : ChipOff;
         }
@@ -313,7 +322,7 @@ internal sealed class InspectPanel : MonoBehaviour
 
     private RectTransform Row()
     {
-        GameObject go = new GameObject("Row", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        GameObject go = new GameObject(RowObjectName, typeof(RectTransform), typeof(HorizontalLayoutGroup));
         RectTransform rect = (RectTransform)go.transform;
         rect.SetParent(transform, false);
         HorizontalLayoutGroup layout = go.GetComponent<HorizontalLayoutGroup>();
@@ -326,7 +335,7 @@ internal sealed class InspectPanel : MonoBehaviour
 
     private void AddChip(RectTransform row, DeviceAction? action)
     {
-        GameObject go = new GameObject("Chip", typeof(RectTransform), typeof(Image), typeof(Button), typeof(HorizontalLayoutGroup));
+        GameObject go = new GameObject(ChipObjectName, typeof(RectTransform), typeof(Image), typeof(Button), typeof(HorizontalLayoutGroup));
         ((RectTransform)go.transform).SetParent(row, false);
         HorizontalLayoutGroup layout = go.GetComponent<HorizontalLayoutGroup>();
         layout.padding = new RectOffset(6, 6, 2, 2);
@@ -335,7 +344,7 @@ internal sealed class InspectPanel : MonoBehaviour
         {
             Action = action,
             Background = go.GetComponent<Image>(),
-            Label = Text(go.transform, "", 11f, TextOff)
+            Label = Text(go.transform, string.Empty, 11f, TextOff)
         };
         Button button = go.GetComponent<Button>();
         button.transition = Selectable.Transition.None;
@@ -346,7 +355,7 @@ internal sealed class InspectPanel : MonoBehaviour
 
     private static TextMeshProUGUI Text(Transform parent, string text, float fontSize, Color color)
     {
-        GameObject go = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+        GameObject go = new GameObject(TextObjectName, typeof(RectTransform), typeof(TextMeshProUGUI));
         ((RectTransform)go.transform).SetParent(parent, false);
         TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
         TMP_FontAsset font = UiFont.Get();

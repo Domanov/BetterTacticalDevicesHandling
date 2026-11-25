@@ -13,6 +13,27 @@ internal enum DeviceActionKind
 
 internal readonly struct DeviceAction
 {
+    private const string VariantTitle = "VARIANT";
+    private const string ModeTitle = "MODE";
+    private const string OnOffTitle = "ON / OFF";
+    private const string ChangeModeTitle = "CHANGE MODE";
+    private const string NextModeLabel = "NEXT: MODE";
+    private const string VariantChip = "VAR";
+    private const string PowerChip = "POWER";
+    private const string ModeChipPrefix = "M";
+    private const string OnLabel = "ON";
+    private const string OffLabel = "OFF";
+    private const string Separator = " · ";
+
+    private const string VisLaserName = "VIS LASER";
+    private const string IrLaserName = "IR LASER";
+    private const string LightName = "TAC LIGHT";
+    private const string IrIlluminatorName = "IR ILLUMINATOR";
+    private const string VisLaserChip = "VIS";
+    private const string IrLaserChip = "IR";
+    private const string LightChip = "LIGHT";
+    private const string IrIlluminatorChip = "ILLUM";
+
     private static readonly DeviceParts[] PartOrder =
         { DeviceParts.VisLaser, DeviceParts.IrLaser, DeviceParts.Light, DeviceParts.IrIlluminator };
 
@@ -66,25 +87,27 @@ internal readonly struct DeviceAction
     public string Title => Kind switch
     {
         DeviceActionKind.Part => PartName(Part),
-        DeviceActionKind.Variant => "VARIANT",
-        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"MODE {Device.Mode + 1}" : "ON / OFF",
-        _ => "CHANGE MODE"
+        DeviceActionKind.Variant => VariantTitle,
+        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{ModeTitle} {Device.Mode + 1}" : OnOffTitle,
+        _ => ChangeModeTitle
     };
 
     public string ChipTitle => Kind switch
     {
         DeviceActionKind.Part => PartChipName(Part),
-        DeviceActionKind.Variant => CanSwitchVariant ? $"VAR {Device.VariantNumber}/{Device.VariantCount}" : "VAR",
-        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"POWER M{Device.Mode + 1}" : "POWER",
-        _ => "MODE"
+        DeviceActionKind.Variant => CanSwitchVariant ? $"{VariantChip} {VariantFraction}" : VariantChip,
+        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{PowerChip} {ModeChipPrefix}{Device.Mode + 1}" : PowerChip,
+        _ => ModeTitle
     };
 
     public string Footer => Kind switch
     {
-        DeviceActionKind.Variant => CanSwitchVariant ? $"{Device.Name} · {Device.VariantNumber}/{Device.VariantCount}" : Device.Name,
-        DeviceActionKind.NextMode => $"NEXT: MODE {(Device.Mode + 1) % Device.ModeParts.Length + 1}",
-        _ => $"{Device.Name} · {(IsLit ? "ON" : "OFF")}"
+        DeviceActionKind.Variant => CanSwitchVariant ? Device.Name + Separator + VariantFraction : Device.Name,
+        DeviceActionKind.NextMode => $"{NextModeLabel} {(Device.Mode + 1) % Device.ModeParts.Length + 1}",
+        _ => Device.Name + Separator + (IsLit ? OnLabel : OffLabel)
     };
+
+    private string VariantFraction => $"{Device.VariantNumber}/{Device.VariantCount}";
 
     public bool TryGetTarget(out LightsState state)
     {
@@ -109,17 +132,17 @@ internal readonly struct DeviceAction
 
     private static string PartName(DeviceParts part) => part switch
     {
-        DeviceParts.VisLaser => "VIS LASER",
-        DeviceParts.IrLaser => "IR LASER",
-        DeviceParts.Light => "TAC LIGHT",
-        _ => "IR ILLUMINATOR"
+        DeviceParts.VisLaser => VisLaserName,
+        DeviceParts.IrLaser => IrLaserName,
+        DeviceParts.Light => LightName,
+        _ => IrIlluminatorName
     };
 
     private static string PartChipName(DeviceParts part) => part switch
     {
-        DeviceParts.VisLaser => "VIS",
-        DeviceParts.IrLaser => "IR",
-        DeviceParts.Light => "LIGHT",
-        _ => "ILLUM"
+        DeviceParts.VisLaser => VisLaserChip,
+        DeviceParts.IrLaser => IrLaserChip,
+        DeviceParts.Light => LightChip,
+        _ => IrIlluminatorChip
     };
 }
