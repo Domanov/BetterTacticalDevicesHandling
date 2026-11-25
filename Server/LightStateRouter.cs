@@ -14,44 +14,44 @@ using SPTarkov.Server.Core.Utils;
 namespace BetterTacticalDevicesHandling.Server;
 
 // Route and JSON keys must match Client/Inspect/LightStateStore.cs.
-public static class LightStateJson
+public static class LightStateApi
 {
-    public const string Route = "/dmnv/bettertacticaldeviceshandling/lights";
-    public const string Items = "items";
-    public const string Id = "id";
-    public const string IsActive = "isActive";
-    public const string Mode = "mode";
-    public const string Failed = "failed";
+    public const string RouteLights = "/dmnv/bettertacticaldeviceshandling/lights";
+    public const string JsonItems = "items";
+    public const string JsonId = "id";
+    public const string JsonIsActive = "isActive";
+    public const string JsonMode = "mode";
+    public const string JsonFailed = "failed";
 }
 
 public record LightState
 {
-    [JsonPropertyName(LightStateJson.Id)]
+    [JsonPropertyName(LightStateApi.JsonId)]
     public string Id { get; init; } = string.Empty;
 
-    [JsonPropertyName(LightStateJson.IsActive)]
+    [JsonPropertyName(LightStateApi.JsonIsActive)]
     public bool IsActive { get; init; }
 
-    [JsonPropertyName(LightStateJson.Mode)]
+    [JsonPropertyName(LightStateApi.JsonMode)]
     public int Mode { get; init; }
 }
 
 public record LightStateRequest : IRequestData
 {
-    [JsonPropertyName(LightStateJson.Items)]
+    [JsonPropertyName(LightStateApi.JsonItems)]
     public List<LightState> Items { get; init; } = [];
 }
 
 public record LightStateResponse
 {
-    [JsonPropertyName(LightStateJson.Failed)]
+    [JsonPropertyName(LightStateApi.JsonFailed)]
     public List<string> Failed { get; init; } = [];
 }
 
 [Injectable]
 public class LightStateRouter(JsonUtil jsonUtil, LightStateService service) : StaticRouter(jsonUtil, [
     new RouteAction<LightStateRequest>(
-        LightStateJson.Route,
+        LightStateApi.RouteLights,
         async (_, request, sessionId, _, cancellationToken) => await service.Apply(request, sessionId, cancellationToken))
 ]);
 

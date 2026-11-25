@@ -9,28 +9,28 @@ using UnityEngine;
 namespace BetterTacticalDevicesHandling.Client;
 
 [BepInPlugin(Guid, Name, Version)]
-[BepInDependency(SptCoreGuid, BepInDependency.DependencyFlags.HardDependency)]
+[BepInDependency(GuidSptCore, BepInDependency.DependencyFlags.HardDependency)]
 public class Plugin : BaseUnityPlugin
 {
     public const string Guid = "com.dmnv.bettertacticaldeviceshandling";
     public const string Name = "Dmnv-BetterTacticalDevicesHandling";
     public const string Version = "1.0.0";
 
-    private const string SptCoreGuid = "com.SPT.core";
+    private const string GuidSptCore = "com.SPT.core";
 
-    private const string WheelSection = "Wheel";
-    private const string WheelKeyName = "Wheel key";
-    private const string WheelKeyDescription =
+    private const string ConfigSectionWheel = "Wheel";
+    private const string ConfigKeyWheelKey = "Wheel key";
+    private const string ConfigDescriptionWheelKey =
         "Opens the device wheel while a weapon is in your hands; press again or Esc to close. Clear it to turn the wheel off. "
         + "Middle mouse is also the game's free look key by default.";
 
-    private const string InspectSection = "Inspect window";
-    private const string InspectPanelName = "Show device panel";
-    private const string InspectPanelDescription = "Show the device switches in the 3D preview of a weapon's inspect window.";
+    private const string ConfigSectionInspect = "Inspect window";
+    private const string ConfigKeyInspectPanel = "Show device panel";
+    private const string ConfigDescriptionInspectPanel = "Show the device switches in the 3D preview of a weapon's inspect window.";
 
-    private const string DebugSection = "Debug";
-    private const string LogModesName = "Log device modes";
-    private const string LogModesDescription =
+    private const string ConfigSectionDebug = "Debug";
+    private const string ConfigKeyLogModes = "Log device modes";
+    private const string ConfigDescriptionLogModes =
         "Log the parts found in each device mode the first time a device type shows up in the wheel (to check modded devices).";
 
     internal static ManualLogSource Log;
@@ -43,12 +43,12 @@ public class Plugin : BaseUnityPlugin
     private void Awake()
     {
         Log = Logger;
-        WheelKey = Config.Bind(WheelSection, WheelKeyName, new KeyboardShortcut(KeyCode.Mouse2), WheelKeyDescription);
+        WheelKey = Config.Bind(ConfigSectionWheel, ConfigKeyWheelKey, new KeyboardShortcut(KeyCode.Mouse2), ConfigDescriptionWheelKey);
         WheelKey.SettingChanged += (_, _) => CacheWheelKey();
         CacheWheelKey();
-        InspectPanelEnabled = Config.Bind(InspectSection, InspectPanelName, true, InspectPanelDescription);
+        InspectPanelEnabled = Config.Bind(ConfigSectionInspect, ConfigKeyInspectPanel, true, ConfigDescriptionInspectPanel);
         InspectPanelEnabled.SettingChanged += (_, _) => InspectPanel.RefreshAll();
-        LogModes = Config.Bind(DebugSection, LogModesName, false, LogModesDescription);
+        LogModes = Config.Bind(ConfigSectionDebug, ConfigKeyLogModes, false, ConfigDescriptionLogModes);
         new InspectShowPatch().Enable();
         new InspectClosePatch().Enable();
         new PreviewBuiltPatch().Enable();

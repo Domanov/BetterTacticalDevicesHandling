@@ -11,30 +11,30 @@ namespace BetterTacticalDevicesHandling.Client.Inspect;
 // Out of raid the game has no inventory action for device state, so changes go to the mod's server route.
 internal static class LightStateStore
 {
-    // Route and JSON keys must match Server/LightStateRouter.cs.
-    private const string Route = "/dmnv/bettertacticaldeviceshandling/lights";
-    private const string ItemsKey = "items";
-    private const string IdKey = "id";
-    private const string IsActiveKey = "isActive";
-    private const string ModeKey = "mode";
-    private const string FailedKey = "failed";
+    // Route and JSON keys must match LightStateApi in Server/LightStateRouter.cs.
+    private const string RouteLights = "/dmnv/bettertacticaldeviceshandling/lights";
+    private const string JsonItems = "items";
+    private const string JsonId = "id";
+    private const string JsonIsActive = "isActive";
+    private const string JsonMode = "mode";
+    private const string JsonFailed = "failed";
 
     // Returns the ids the server did not save; all ids when the request itself failed.
     public static async Task<HashSet<string>> Save(IReadOnlyList<LightsState> states)
     {
         JObject request = new JObject
         {
-            [ItemsKey] = new JArray(states.Select(s => new JObject
+            [JsonItems] = new JArray(states.Select(s => new JObject
             {
-                [IdKey] = s.Id,
-                [IsActiveKey] = s.IsActive,
-                [ModeKey] = s.LightMode
+                [JsonId] = s.Id,
+                [JsonIsActive] = s.IsActive,
+                [JsonMode] = s.LightMode
             }))
         };
         try
         {
-            string response = await RequestHandler.PostJsonAsync(Route, request.ToString());
-            JArray failed = JObject.Parse(response)[FailedKey] as JArray;
+            string response = await RequestHandler.PostJsonAsync(RouteLights, request.ToString());
+            JArray failed = JObject.Parse(response)[JsonFailed] as JArray;
             return new HashSet<string>(failed?.Select(t => (string)t) ?? Enumerable.Empty<string>());
         }
         catch (Exception e)

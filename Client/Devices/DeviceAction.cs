@@ -13,26 +13,30 @@ internal enum DeviceActionKind
 
 internal readonly struct DeviceAction
 {
-    private const string VariantTitle = "VARIANT";
-    private const string ModeTitle = "MODE";
-    private const string OnOffTitle = "ON / OFF";
-    private const string ChangeModeTitle = "CHANGE MODE";
-    private const string NextModeLabel = "NEXT: MODE";
-    private const string VariantChip = "VAR";
-    private const string PowerChip = "POWER";
-    private const string ModeChipPrefix = "M";
-    private const string OnLabel = "ON";
-    private const string OffLabel = "OFF";
-    private const string Separator = " · ";
+    private const string NameVisLaser = "VIS LASER";
+    private const string NameIrLaser = "IR LASER";
+    private const string NameLight = "TAC LIGHT";
+    private const string NameIrIlluminator = "IR ILLUMINATOR";
 
-    private const string VisLaserName = "VIS LASER";
-    private const string IrLaserName = "IR LASER";
-    private const string LightName = "TAC LIGHT";
-    private const string IrIlluminatorName = "IR ILLUMINATOR";
-    private const string VisLaserChip = "VIS";
-    private const string IrLaserChip = "IR";
-    private const string LightChip = "LIGHT";
-    private const string IrIlluminatorChip = "ILLUM";
+    private const string TitleVariant = "VARIANT";
+    private const string TitleMode = "MODE";
+    private const string TitleOnOff = "ON / OFF";
+    private const string TitleChangeMode = "CHANGE MODE";
+
+    private const string FooterNextMode = "NEXT: MODE";
+
+    private const string ChipVisLaser = "VIS";
+    private const string ChipIrLaser = "IR";
+    private const string ChipLight = "LIGHT";
+    private const string ChipIrIlluminator = "ILLUM";
+    private const string ChipVariant = "VAR";
+    private const string ChipMode = "MODE";
+    private const string ChipPower = "POWER";
+    private const string ChipModePrefix = "M";
+
+    private const string LabelOn = "ON";
+    private const string LabelOff = "OFF";
+    private const string LabelSeparator = " · ";
 
     private static readonly DeviceParts[] PartOrder =
         { DeviceParts.VisLaser, DeviceParts.IrLaser, DeviceParts.Light, DeviceParts.IrIlluminator };
@@ -87,24 +91,24 @@ internal readonly struct DeviceAction
     public string Title => Kind switch
     {
         DeviceActionKind.Part => PartName(Part),
-        DeviceActionKind.Variant => VariantTitle,
-        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{ModeTitle} {Device.Mode + 1}" : OnOffTitle,
-        _ => ChangeModeTitle
+        DeviceActionKind.Variant => TitleVariant,
+        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{TitleMode} {Device.Mode + 1}" : TitleOnOff,
+        _ => TitleChangeMode
     };
 
     public string ChipTitle => Kind switch
     {
         DeviceActionKind.Part => PartChipName(Part),
-        DeviceActionKind.Variant => CanSwitchVariant ? $"{VariantChip} {VariantFraction}" : VariantChip,
-        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{PowerChip} {ModeChipPrefix}{Device.Mode + 1}" : PowerChip,
-        _ => ModeTitle
+        DeviceActionKind.Variant => CanSwitchVariant ? $"{ChipVariant} {VariantFraction}" : ChipVariant,
+        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{ChipPower} {ChipModePrefix}{Device.Mode + 1}" : ChipPower,
+        _ => ChipMode
     };
 
     public string Footer => Kind switch
     {
-        DeviceActionKind.Variant => CanSwitchVariant ? Device.Name + Separator + VariantFraction : Device.Name,
-        DeviceActionKind.NextMode => $"{NextModeLabel} {(Device.Mode + 1) % Device.ModeParts.Length + 1}",
-        _ => Device.Name + Separator + (IsLit ? OnLabel : OffLabel)
+        DeviceActionKind.Variant => CanSwitchVariant ? Device.Name + LabelSeparator + VariantFraction : Device.Name,
+        DeviceActionKind.NextMode => $"{FooterNextMode} {(Device.Mode + 1) % Device.ModeParts.Length + 1}",
+        _ => Device.Name + LabelSeparator + (IsLit ? LabelOn : LabelOff)
     };
 
     private string VariantFraction => $"{Device.VariantNumber}/{Device.VariantCount}";
@@ -132,17 +136,17 @@ internal readonly struct DeviceAction
 
     private static string PartName(DeviceParts part) => part switch
     {
-        DeviceParts.VisLaser => VisLaserName,
-        DeviceParts.IrLaser => IrLaserName,
-        DeviceParts.Light => LightName,
-        _ => IrIlluminatorName
+        DeviceParts.VisLaser => NameVisLaser,
+        DeviceParts.IrLaser => NameIrLaser,
+        DeviceParts.Light => NameLight,
+        _ => NameIrIlluminator
     };
 
     private static string PartChipName(DeviceParts part) => part switch
     {
-        DeviceParts.VisLaser => VisLaserChip,
-        DeviceParts.IrLaser => IrLaserChip,
-        DeviceParts.Light => LightChip,
-        _ => IrIlluminatorChip
+        DeviceParts.VisLaser => ChipVisLaser,
+        DeviceParts.IrLaser => ChipIrLaser,
+        DeviceParts.Light => ChipLight,
+        _ => ChipIrIlluminator
     };
 }

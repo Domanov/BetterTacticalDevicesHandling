@@ -14,13 +14,13 @@ namespace BetterTacticalDevicesHandling.Client.Devices;
 internal static class DeviceModes
 {
     // Game's own (misspelt) field name.
-    private const string ModeTransformsField = "_ligthbeamsTransforms";
-    private const string IndicatorName = "indicator";
+    private const string FieldModeTransforms = "_ligthbeamsTransforms";
+    private const string MatchIndicator = "indicator";
     private const string DumpIndent = "  ";
-    private const string NoModeTransform = "(no mode transform)";
+    private const string DumpNoModeTransform = "(no mode transform)";
 
     private static readonly AccessTools.FieldRef<TacticalComboVisualController, List<Transform>> ModeTransforms =
-        AccessTools.FieldRefAccess<TacticalComboVisualController, List<Transform>>(ModeTransformsField);
+        AccessTools.FieldRefAccess<TacticalComboVisualController, List<Transform>>(FieldModeTransforms);
 
     // A template always uses the same prefab, so each device type is scanned once per session.
     private static readonly Dictionary<MongoID, DeviceParts[]> Cache = new Dictionary<MongoID, DeviceParts[]>();
@@ -76,7 +76,7 @@ internal static class DeviceModes
     {
         for (; t != null && t != mode; t = t.parent)
         {
-            if (t.name.IndexOf(IndicatorName, StringComparison.OrdinalIgnoreCase) >= 0)
+            if (t.name.IndexOf(MatchIndicator, StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return true;
             }
@@ -89,7 +89,7 @@ internal static class DeviceModes
     {
         if (mode == null)
         {
-            return DumpIndent + NoModeTransform;
+            return DumpIndent + DumpNoModeTransform;
         }
 
         StringBuilder sb = new StringBuilder();

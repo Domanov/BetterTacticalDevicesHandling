@@ -14,7 +14,7 @@ namespace BetterTacticalDevicesHandling.Client.Wheel;
 // so blocking commands, eating axes and showing the cursor here keeps the player from shooting or looking around.
 internal sealed class DeviceWheel : InputNode
 {
-    private const string WheelObjectName = Plugin.Name + " Wheel";
+    private const string ObjectWheel = Plugin.Name + " Wheel";
     private const int MinSlots = 6;
     private const float RadiusX = 250f;
     private const float RadiusY = 220f;
@@ -57,7 +57,7 @@ internal sealed class DeviceWheel : InputNode
             return;
         }
 
-        GameObject go = new GameObject(WheelObjectName, typeof(RectTransform));
+        GameObject go = new GameObject(ObjectWheel, typeof(RectTransform));
         _open = go.AddComponent<DeviceWheel>();
         _open.Build(translator, owner, devices);
     }

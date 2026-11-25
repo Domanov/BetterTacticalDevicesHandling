@@ -6,7 +6,7 @@ namespace BetterTacticalDevicesHandling.Client;
 
 internal static class UiFont
 {
-    private const string GameFontName = "Bender";
+    private const string MatchGameFont = "Bender";
 
     private static TMP_FontAsset _font;
 
@@ -16,7 +16,7 @@ internal static class UiFont
         if (_font == null)
         {
             TMP_FontAsset[] fonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
-            _font = fonts.FirstOrDefault(f => f.name.Contains(GameFontName)) ?? fonts.FirstOrDefault();
+            _font = fonts.FirstOrDefault(f => f.name.Contains(MatchGameFont)) ?? fonts.FirstOrDefault();
         }
 
         return _font;
