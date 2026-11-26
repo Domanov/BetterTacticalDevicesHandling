@@ -278,7 +278,10 @@ internal sealed class DeviceWheel : InputNode
             }
         }
 
-        _translator._controller.SetLightsState(states, false, true);
+        if (_translator._controller.SetLightsState(states, false, true))
+        {
+            LightSetups.Remember(_translator._controller.Item.Id, states);
+        }
 
         foreach (WheelTile t in _tiles)
         {

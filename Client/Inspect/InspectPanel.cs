@@ -225,6 +225,7 @@ internal sealed class InspectPanel : MonoBehaviour
             ApplyInStash(targets);
         }
 
+        LightSetups.Remember(_weapon.Id, _devices.Select(d => d.Current()).ToArray());
         RefreshModel(targets);
         RefreshChips();
     }

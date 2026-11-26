@@ -21,6 +21,7 @@ public class Plugin : BaseUnityPlugin
     internal static ConfigEntry<KeyboardShortcut> WheelKey;
     internal static ConfigEntry<WheelActivation> Activation;
     internal static ConfigEntry<bool> MoveWhileOpen;
+    internal static ConfigEntry<bool> TacticalKeyRestores;
     internal static ConfigEntry<bool> InspectPanelEnabled;
     internal static ConfigEntry<bool> LogModes;
 
@@ -34,6 +35,7 @@ public class Plugin : BaseUnityPlugin
         CacheWheelKey();
         Activation = Config.Bind(ConfigSectionWheel, ConfigKeyActivation, WheelActivation.Toggle, ConfigDescriptionActivation);
         MoveWhileOpen = Config.Bind(ConfigSectionWheel, ConfigKeyMoveWhileOpen, true, ConfigDescriptionMoveWhileOpen);
+        TacticalKeyRestores = Config.Bind(ConfigSectionTacticalKey, ConfigKeyRestoreSetup, true, ConfigDescriptionRestoreSetup);
         InspectPanelEnabled = Config.Bind(ConfigSectionInspect, ConfigKeyInspectPanel, true, ConfigDescriptionInspectPanel);
         InspectPanelEnabled.SettingChanged += (_, _) => InspectPanel.RefreshAll();
         LogModes = Config.Bind(ConfigSectionDebug, ConfigKeyLogModes, false, ConfigDescriptionLogModes);
@@ -41,6 +43,7 @@ public class Plugin : BaseUnityPlugin
         new InspectClosePatch().Enable();
         new PreviewBuiltPatch().Enable();
         new FirearmsBeamsPatch().Enable();
+        new TacticalKeyPatch().Enable();
         Log.LogInfo($"{Name} {Version} loaded");
     }
 

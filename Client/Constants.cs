@@ -19,6 +19,12 @@ internal static class Constants
         internal const string ConfigDescriptionMoveWhileOpen =
             "Keep walking, sprinting, crouching, jumping and leaning while the wheel is open. Mouse look stays blocked, so the mouse picks tiles.";
 
+        internal const string ConfigSectionTacticalKey = "Tactical key";
+        internal const string ConfigKeyRestoreSetup = "T restores wheel setup";
+        internal const string ConfigDescriptionRestoreSetup =
+            "The tactical device key switches between all off and the last setup you made in the wheel or inspect panel, per weapon. "
+            + "Without a remembered setup it works as in the base game. Ctrl+T is not changed.";
+
         internal const string ConfigSectionInspect = "Inspect window";
         internal const string ConfigKeyInspectPanel = "Show device panel";
         internal const string ConfigDescriptionInspectPanel = "Show the device switches in the 3D preview of a weapon's inspect window.";
