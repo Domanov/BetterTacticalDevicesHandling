@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using BetterTacticalDevicesHandling.Client.Devices;
+using static BetterTacticalDevicesHandling.Client.Wheel.Constants.DeviceWheel;
 
 namespace BetterTacticalDevicesHandling.Client.Wheel;
 
@@ -14,7 +15,6 @@ namespace BetterTacticalDevicesHandling.Client.Wheel;
 // so blocking commands, eating axes and showing the cursor here keeps the player from shooting or looking around.
 internal sealed class DeviceWheel : InputNode
 {
-    private const string ObjectWheel = Plugin.Name + " Wheel";
     private const int MinSlots = 6;
     private const float RadiusX = 250f;
     private const float RadiusY = 220f;

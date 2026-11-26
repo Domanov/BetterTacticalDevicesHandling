@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EFT;
+using static BetterTacticalDevicesHandling.Client.Devices.Constants.DeviceAction;
 
 namespace BetterTacticalDevicesHandling.Client.Devices;
 
@@ -13,31 +14,6 @@ internal enum DeviceActionKind
 
 internal readonly struct DeviceAction
 {
-    private const string NameVisLaser = "VIS LASER";
-    private const string NameIrLaser = "IR LASER";
-    private const string NameLight = "TAC LIGHT";
-    private const string NameIrIlluminator = "IR ILLUMINATOR";
-
-    private const string TitleVariant = "VARIANT";
-    private const string TitleMode = "MODE";
-    private const string TitleOnOff = "ON / OFF";
-    private const string TitleChangeMode = "CHANGE MODE";
-
-    private const string FooterNextMode = "NEXT: MODE";
-
-    private const string ChipVisLaser = "VIS";
-    private const string ChipIrLaser = "IR";
-    private const string ChipLight = "LIGHT";
-    private const string ChipIrIlluminator = "ILLUM";
-    private const string ChipVariant = "VAR";
-    private const string ChipMode = "MODE";
-    private const string ChipPower = "POWER";
-    private const string ChipModePrefix = "M";
-
-    private const string LabelOn = "ON";
-    private const string LabelOff = "OFF";
-    private const string LabelSeparator = " · ";
-
     private static readonly DeviceParts[] PartOrder =
         { DeviceParts.VisLaser, DeviceParts.IrLaser, DeviceParts.Light, DeviceParts.IrIlluminator };
 
@@ -92,26 +68,28 @@ internal readonly struct DeviceAction
     {
         DeviceActionKind.Part => PartName(Part),
         DeviceActionKind.Variant => TitleVariant,
-        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{TitleMode} {Device.Mode + 1}" : TitleOnOff,
+        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? string.Format(TitleModeNumber, Device.Mode + 1) : TitleOnOff,
         _ => TitleChangeMode
     };
 
     public string ChipTitle => Kind switch
     {
         DeviceActionKind.Part => PartChipName(Part),
-        DeviceActionKind.Variant => CanSwitchVariant ? $"{ChipVariant} {VariantFraction}" : ChipVariant,
-        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? $"{ChipPower} {ChipModePrefix}{Device.Mode + 1}" : ChipPower,
+        DeviceActionKind.Variant => CanSwitchVariant
+            ? string.Format(ChipVariantNumber, Device.VariantNumber, Device.VariantCount)
+            : ChipVariant,
+        DeviceActionKind.Power => Device.ModeParts.Length > 1 ? string.Format(ChipPowerMode, Device.Mode + 1) : ChipPower,
         _ => ChipMode
     };
 
     public string Footer => Kind switch
     {
-        DeviceActionKind.Variant => CanSwitchVariant ? Device.Name + LabelSeparator + VariantFraction : Device.Name,
-        DeviceActionKind.NextMode => $"{FooterNextMode} {(Device.Mode + 1) % Device.ModeParts.Length + 1}",
-        _ => Device.Name + LabelSeparator + (IsLit ? LabelOn : LabelOff)
+        DeviceActionKind.Variant => CanSwitchVariant
+            ? string.Format(FooterDeviceVariant, Device.Name, Device.VariantNumber, Device.VariantCount)
+            : Device.Name,
+        DeviceActionKind.NextMode => string.Format(FooterNextMode, (Device.Mode + 1) % Device.ModeParts.Length + 1),
+        _ => string.Format(FooterDeviceState, Device.Name, IsLit ? LabelOn : LabelOff)
     };
-
-    private string VariantFraction => $"{Device.VariantNumber}/{Device.VariantCount}";
 
     public bool TryGetTarget(out LightsState state)
     {

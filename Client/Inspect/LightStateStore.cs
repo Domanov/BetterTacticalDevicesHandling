@@ -5,20 +5,13 @@ using System.Threading.Tasks;
 using EFT;
 using Newtonsoft.Json.Linq;
 using SPT.Common.Http;
+using static BetterTacticalDevicesHandling.Client.Inspect.Constants.LightStateStore;
 
 namespace BetterTacticalDevicesHandling.Client.Inspect;
 
 // Out of raid the game has no inventory action for device state, so changes go to the mod's server route.
 internal static class LightStateStore
 {
-    // Route and JSON keys must match LightStateApi in Server/LightStateRouter.cs.
-    private const string RouteLights = "/dmnv/bettertacticaldeviceshandling/lights";
-    private const string JsonItems = "items";
-    private const string JsonId = "id";
-    private const string JsonIsActive = "isActive";
-    private const string JsonMode = "mode";
-    private const string JsonFailed = "failed";
-
     // Returns the ids the server did not save; all ids when the request itself failed.
     public static async Task<HashSet<string>> Save(IReadOnlyList<LightsState> states)
     {

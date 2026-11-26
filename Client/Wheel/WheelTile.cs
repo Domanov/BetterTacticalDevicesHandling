@@ -5,14 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using BetterTacticalDevicesHandling.Client.Devices;
+using static BetterTacticalDevicesHandling.Client.Wheel.Constants.WheelTile;
 
 namespace BetterTacticalDevicesHandling.Client.Wheel;
 
 internal sealed class WheelTile
 {
-    private const string ObjectImage = "Image";
-    private const string ObjectText = "Text";
-
     private static readonly Vector2 Size = new Vector2(170f, 110f);
     private static readonly Color Background = new Color(0f, 0f, 0f, 0.6f);
     private static readonly Color BackgroundSelected = new Color(0.3f, 0.3f, 0.28f, 0.85f);

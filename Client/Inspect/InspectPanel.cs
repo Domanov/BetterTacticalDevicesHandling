@@ -9,6 +9,7 @@ using BetterTacticalDevicesHandling.Client.Devices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static BetterTacticalDevicesHandling.Client.Inspect.Constants.InspectPanel;
 
 namespace BetterTacticalDevicesHandling.Client.Inspect;
 
@@ -16,15 +17,6 @@ namespace BetterTacticalDevicesHandling.Client.Inspect;
 // rebuilt whenever the preview model is (re)built, e.g. after a mod is attached in the window.
 internal sealed class InspectPanel : MonoBehaviour
 {
-    private const string FieldCachedLightMasks = "_cachedLightMasks";
-    private const string FieldPositionedObject = "_positionedObject";
-    private const string ObjectPanel = Plugin.Name + " Panel";
-    private const string ObjectRow = "Row";
-    private const string ObjectChip = "Chip";
-    private const string ObjectText = "Text";
-    private const string ChipAllOff = "ALL OFF";
-    private const string LabelLockedHint = "Take the weapon in hands to switch";
-
     private static readonly Color PanelBackground = new Color(0f, 0f, 0f, 0.45f);
     private static readonly Color ChipOff = new Color(0.12f, 0.12f, 0.12f, 0.85f);
     private static readonly Color ChipOn = new Color(0.36f, 0.4f, 0.3f, 0.95f);

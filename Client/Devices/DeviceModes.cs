@@ -6,6 +6,7 @@ using EFT.InventoryLogic;
 using EFT.Visual;
 using HarmonyLib;
 using UnityEngine;
+using static BetterTacticalDevicesHandling.Client.Devices.Constants.DeviceModes;
 
 namespace BetterTacticalDevicesHandling.Client.Devices;
 
@@ -13,12 +14,6 @@ namespace BetterTacticalDevicesHandling.Client.Devices;
 // Rule checked against every vanilla device and the modded ones in the Fika install (docs/better-tactical-devices-handling-plan.md).
 internal static class DeviceModes
 {
-    // Game's own (misspelt) field name.
-    private const string FieldModeTransforms = "_ligthbeamsTransforms";
-    private const string MatchIndicator = "indicator";
-    private const string DumpIndent = "  ";
-    private const string DumpNoModeTransform = "(no mode transform)";
-
     private static readonly AccessTools.FieldRef<TacticalComboVisualController, List<Transform>> ModeTransforms =
         AccessTools.FieldRefAccess<TacticalComboVisualController, List<Transform>>(FieldModeTransforms);
 
@@ -89,13 +84,13 @@ internal static class DeviceModes
     {
         if (mode == null)
         {
-            return DumpIndent + DumpNoModeTransform;
+            return "  (no mode transform)";
         }
 
         StringBuilder sb = new StringBuilder();
         foreach (Transform t in mode.GetComponentsInChildren<Transform>(true))
         {
-            sb.Append(DumpIndent).Append(t.name).Append(':');
+            sb.Append("  ").Append(t.name).Append(':');
             foreach (Component c in t.GetComponents<Component>())
             {
                 sb.Append(' ').Append(c.GetType().Name);
