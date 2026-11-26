@@ -14,8 +14,6 @@ internal sealed class WheelTile
     private static readonly Vector2 Size = new Vector2(170f, 110f);
     private static readonly Color Background = new Color(0f, 0f, 0f, 0.6f);
     private static readonly Color BackgroundSelected = new Color(0.3f, 0.3f, 0.28f, 0.85f);
-    private static readonly Color TextOn = new Color(0.92f, 0.92f, 0.88f, 1f);
-    private static readonly Color TextOff = new Color(0.55f, 0.55f, 0.52f, 1f);
 
     public readonly DeviceAction? Content;
 
@@ -23,6 +21,7 @@ internal sealed class WheelTile
     private readonly TextMeshProUGUI _title;
     private readonly TextMeshProUGUI _footer;
     private readonly Action _unbindIcon;
+    private bool _selected;
 
     public WheelTile(RectTransform parent, Vector2 position, DeviceAction? action, TMP_FontAsset font)
     {
@@ -34,10 +33,11 @@ internal sealed class WheelTile
             return;
         }
 
-        _title = CreateText(_background.rectTransform, font, 13f, 30f, true, new Vector2(0f, 1f), new Vector2(10f, -8f));
+        _title = CreateText(_background.rectTransform, font, 17f, 40f, true, new Vector2(0f, 1f), new Vector2(10f, -8f));
+        _title.fontStyle = FontStyles.Bold;
         _footer = CreateText(_background.rectTransform, font, 11f, 14f, false, new Vector2(0f, 0f), new Vector2(10f, 8f));
-        _footer.color = TextOff;
-        Image icon = CreateImage(_background.rectTransform, new Vector2(0f, -2f), new Vector2(120f, 44f), Color.white);
+        _footer.color = UiPalette.TextOff;
+        Image icon = CreateImage(_background.rectTransform, new Vector2(0f, -10f), new Vector2(120f, 36f), Color.white);
         icon.preserveAspect = true;
         ItemIcon itemIcon = ItemViewFactory.LoadItemIcon(action.Value.Device.Light.Item, 1, false);
         _unbindIcon = itemIcon.Changed.Bind(() => icon.sprite = itemIcon.Sprite);
@@ -48,7 +48,8 @@ internal sealed class WheelTile
 
     public void SetSelected(bool selected)
     {
-        _background.color = selected ? BackgroundSelected : Background;
+        _selected = selected;
+        UpdateBackground();
     }
 
     public void Refresh()
@@ -56,9 +57,18 @@ internal sealed class WheelTile
         if (Content is DeviceAction action)
         {
             _title.text = action.Title;
-            _title.color = action.IsLit ? TextOn : TextOff;
+            _title.color = action.IsOn ? UiPalette.TextActive : action.IsLit ? UiPalette.TextOn : UiPalette.TextOff;
             _footer.text = action.Footer;
+            UpdateBackground();
         }
+    }
+
+    private void UpdateBackground()
+    {
+        bool on = Content is DeviceAction action && action.IsOn;
+        _background.color = on
+            ? _selected ? UiPalette.ActiveBackgroundSelected : UiPalette.ActiveBackground
+            : _selected ? BackgroundSelected : Background;
     }
 
     public void Release()
@@ -83,7 +93,7 @@ internal sealed class WheelTile
     {
         foreach (float angle in new[] { 45f, -45f })
         {
-            Image line = CreateImage(parent, Vector2.zero, new Vector2(44f, 1.5f), TextOff);
+            Image line = CreateImage(parent, Vector2.zero, new Vector2(44f, 1.5f), UiPalette.TextOff);
             line.rectTransform.localRotation = Quaternion.Euler(0f, 0f, angle);
         }
     }

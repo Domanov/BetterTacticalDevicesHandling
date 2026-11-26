@@ -19,9 +19,6 @@ internal sealed class InspectPanel : MonoBehaviour
 {
     private static readonly Color PanelBackground = new Color(0f, 0f, 0f, 0.45f);
     private static readonly Color ChipOff = new Color(0.12f, 0.12f, 0.12f, 0.85f);
-    private static readonly Color ChipOn = new Color(0.36f, 0.4f, 0.3f, 0.95f);
-    private static readonly Color TextOn = new Color(0.92f, 0.92f, 0.88f, 1f);
-    private static readonly Color TextOff = new Color(0.55f, 0.55f, 0.52f, 1f);
     private static readonly Color TextLocked = new Color(0.4f, 0.4f, 0.38f, 1f);
 
     private static readonly Dictionary<WeaponPreview, InspectPanel> Panels = new Dictionary<WeaponPreview, InspectPanel>();
@@ -137,7 +134,7 @@ internal sealed class InspectPanel : MonoBehaviour
         foreach (TacticalDevice device in _devices)
         {
             RectTransform row = Row();
-            Text(row, device.Name, 12f, TextOn).gameObject.AddComponent<LayoutElement>().minWidth = 90f;
+            Text(row, device.Name, 13f, UiPalette.TextOn).gameObject.AddComponent<LayoutElement>().minWidth = 90f;
             actions.Clear();
             DeviceAction.AddFor(device, actions);
             foreach (DeviceAction action in actions)
@@ -153,7 +150,7 @@ internal sealed class InspectPanel : MonoBehaviour
 
         if (_access == InspectAccess.Locked)
         {
-            Text(Row(), LabelLockedHint, 11f, TextOff);
+            Text(Row(), LabelLockedHint, 11f, UiPalette.TextOff);
         }
 
         gameObject.SetActive(true);
@@ -176,10 +173,14 @@ internal sealed class InspectPanel : MonoBehaviour
     {
         foreach (Chip chip in _chips)
         {
+            bool on = chip.Action?.IsOn ?? false;
             bool lit = chip.Action?.IsLit ?? false;
             chip.Label.text = chip.Action?.ChipTitle ?? ChipAllOff;
-            chip.Label.color = _access == InspectAccess.Locked ? TextLocked : lit ? TextOn : TextOff;
-            chip.Background.color = lit ? ChipOn : ChipOff;
+            chip.Label.color = _access == InspectAccess.Locked ? TextLocked
+                : on ? UiPalette.TextActive
+                : lit ? UiPalette.TextOn
+                : UiPalette.TextOff;
+            chip.Background.color = on ? UiPalette.ActiveBackground : ChipOff;
         }
     }
 
@@ -330,14 +331,15 @@ internal sealed class InspectPanel : MonoBehaviour
         GameObject go = new GameObject(ObjectChip, typeof(RectTransform), typeof(Image), typeof(Button), typeof(HorizontalLayoutGroup));
         ((RectTransform)go.transform).SetParent(row, false);
         HorizontalLayoutGroup layout = go.GetComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(6, 6, 2, 2);
+        layout.padding = new RectOffset(8, 8, 3, 3);
         layout.childControlWidth = layout.childControlHeight = true;
         Chip chip = new Chip
         {
             Action = action,
             Background = go.GetComponent<Image>(),
-            Label = Text(go.transform, string.Empty, 11f, TextOff)
+            Label = Text(go.transform, string.Empty, 13f, UiPalette.TextOff)
         };
+        chip.Label.fontStyle = FontStyles.Bold;
         Button button = go.GetComponent<Button>();
         button.transition = Selectable.Transition.None;
         button.targetGraphic = chip.Background;

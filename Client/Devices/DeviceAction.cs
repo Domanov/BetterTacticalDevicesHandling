@@ -64,6 +64,10 @@ internal readonly struct DeviceAction
         _ => true
     };
 
+    // A device state that is on (a part, or power for devices without recognised parts), as opposed to an action
+    // like CHANGE MODE or VARIANT.
+    public bool IsOn => (Kind == DeviceActionKind.Part || Kind == DeviceActionKind.Power) && IsLit;
+
     public string Title => Kind switch
     {
         DeviceActionKind.Part => PartName(Part),
