@@ -19,6 +19,8 @@ public class Plugin : BaseUnityPlugin
 
     internal static ManualLogSource Log;
     internal static ConfigEntry<KeyboardShortcut> WheelKey;
+    internal static ConfigEntry<WheelActivation> Activation;
+    internal static ConfigEntry<bool> MoveWhileOpen;
     internal static ConfigEntry<bool> InspectPanelEnabled;
     internal static ConfigEntry<bool> LogModes;
 
@@ -30,6 +32,8 @@ public class Plugin : BaseUnityPlugin
         WheelKey = Config.Bind(ConfigSectionWheel, ConfigKeyWheelKey, new KeyboardShortcut(KeyCode.Mouse2), ConfigDescriptionWheelKey);
         WheelKey.SettingChanged += (_, _) => CacheWheelKey();
         CacheWheelKey();
+        Activation = Config.Bind(ConfigSectionWheel, ConfigKeyActivation, WheelActivation.Toggle, ConfigDescriptionActivation);
+        MoveWhileOpen = Config.Bind(ConfigSectionWheel, ConfigKeyMoveWhileOpen, true, ConfigDescriptionMoveWhileOpen);
         InspectPanelEnabled = Config.Bind(ConfigSectionInspect, ConfigKeyInspectPanel, true, ConfigDescriptionInspectPanel);
         InspectPanelEnabled.SettingChanged += (_, _) => InspectPanel.RefreshAll();
         LogModes = Config.Bind(ConfigSectionDebug, ConfigKeyLogModes, false, ConfigDescriptionLogModes);
@@ -52,6 +56,10 @@ public class Plugin : BaseUnityPlugin
         if (Input.GetKeyDown(_wheelKey) && WheelKey.Value.IsDown())
         {
             DeviceWheel.Toggle();
+        }
+        else if (Input.GetKeyUp(_wheelKey) && Activation.Value == WheelActivation.Hold)
+        {
+            DeviceWheel.ApplyAndClose();
         }
     }
 }

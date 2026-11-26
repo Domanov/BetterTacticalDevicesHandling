@@ -20,6 +20,18 @@ internal sealed class DeviceWheel : InputNode
     private const float RadiusY = 220f;
     private const float DeadZone = 60f;
 
+    private static readonly EAxis[] MouseAxes = { EAxis.TurnX, EAxis.TurnY, EAxis.LookX, EAxis.LookY, EAxis.LeanX };
+
+    // Let through to the player while the wheel is open, including the End/Return halves so nothing sticks.
+    private static readonly HashSet<ECommand> MovementCommands = new HashSet<ECommand>
+    {
+        ECommand.ToggleSpeed, ECommand.DecreaseWalkSpeed,
+        ECommand.ToggleDuck, ECommand.ToggleProne, ECommand.NextWalkPose, ECommand.PreviousWalkPose, ECommand.RestorePose,
+        ECommand.ToggleSprinting, ECommand.EndSprinting, ECommand.ToggleWalk, ECommand.EndWalk, ECommand.Jump,
+        ECommand.ToggleStepLeft, ECommand.ToggleStepRight, ECommand.ReturnFromLeftStep, ECommand.ReturnFromRightStep,
+        ECommand.ToggleLeanLeft, ECommand.ToggleLeanRight, ECommand.LeanLeftSlow, ECommand.EndLeanLeft, ECommand.EndLeanRight
+    };
+
     private static DeviceWheel _open;
 
     private FirearmHandsInputTranslator _translator;
@@ -62,6 +74,18 @@ internal sealed class DeviceWheel : InputNode
         _open.Build(translator, owner, devices);
     }
 
+    // Hold activation: the wheel key went up, so the pointed tile is applied and the wheel closes.
+    public static void ApplyAndClose()
+    {
+        if (_open == null)
+        {
+            return;
+        }
+
+        _open.Apply(_open._selected);
+        _open.CloseOnRelease(Plugin.WheelKey.Value.MainKey);
+    }
+
     public override ETranslateResult TranslateCommand(ECommand command)
     {
         if (command == ECommand.Escape)
@@ -69,12 +93,30 @@ internal sealed class DeviceWheel : InputNode
             CloseOnRelease(KeyCode.Escape);
         }
 
+        if (Plugin.MoveWhileOpen.Value && MovementCommands.Contains(command))
+        {
+            return ETranslateResult.Ignore;
+        }
+
         return GetDefaultBlockResult(command);
     }
 
+    // Moving keeps the WASD axes; the mouse only picks tiles, so turning, free look and mouse lean are zeroed.
     public override void TranslateAxes(ref float[] axes)
     {
-        axes = null;
+        if (!Plugin.MoveWhileOpen.Value || axes == null)
+        {
+            axes = null;
+            return;
+        }
+
+        foreach (EAxis axis in MouseAxes)
+        {
+            if ((int)axis < axes.Length)
+            {
+                axes[(int)axis] = 0f;
+            }
+        }
     }
 
     public override ECursorResult ShouldLockCursor()
