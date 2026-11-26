@@ -66,7 +66,7 @@ internal sealed class DeviceWheel : InputNode
         List<TacticalDevice> devices = TacticalDevice.Collect(translator._controller.Item, player.HandsController.ControllerGameObject.transform);
         if (Plugin.LogModes.Value && player.HandsController is Player.FirearmController firearm)
         {
-            DeviceDiagnostics.Log(firearm.Firearms, devices);
+            DeviceDiagnostics.Log(firearm.Firearms, firearm.Item, "wheel opened");
         }
 
         if (devices.Count == 0)

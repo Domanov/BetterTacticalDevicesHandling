@@ -16,5 +16,10 @@ public class FirearmsBeamsPatch : ModulePatch
     public static void PatchPostfix(Firearms __instance)
     {
         MissedBeams.Refresh(__instance);
+        if (Plugin.LogModes.Value && __instance.Player != null && __instance.Player.IsYourPlayer
+            && __instance.Player.HandsController is Player.FirearmController firearm && firearm.Firearms == __instance)
+        {
+            DeviceDiagnostics.Log(__instance, firearm.Item, "beams refreshed");
+        }
     }
 }

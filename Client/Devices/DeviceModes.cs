@@ -14,7 +14,7 @@ namespace BetterTacticalDevicesHandling.Client.Devices;
 // Rule checked against every vanilla device and the modded ones in the Fika install (docs/better-tactical-devices-handling-plan.md).
 internal static class DeviceModes
 {
-    private static readonly AccessTools.FieldRef<TacticalComboVisualController, List<Transform>> ModeTransforms =
+    internal static readonly AccessTools.FieldRef<TacticalComboVisualController, List<Transform>> ModeTransforms =
         AccessTools.FieldRefAccess<TacticalComboVisualController, List<Transform>>(FieldModeTransforms);
 
     // A template always uses the same prefab, so each device type is scanned once per session.
