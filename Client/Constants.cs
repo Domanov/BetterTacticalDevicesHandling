@@ -13,7 +13,7 @@ internal static class Constants
             + "Middle mouse is also the game's free look key by default.";
         internal const string ConfigKeyActivation = "Activation";
         internal const string ConfigDescriptionActivation =
-            "Toggle: press the wheel key to open, click tiles, press it again (or Esc / right mouse) to close. "
+            "Toggle: press the wheel key to open, click tiles, press it again (or Esc / right mouse / left click in the centre) to close. "
             + "Hold: hold the wheel key, point at a tile and release the key to apply it.";
         internal const string ConfigKeyMoveWhileOpen = "Move while open";
         internal const string ConfigDescriptionMoveWhileOpen =

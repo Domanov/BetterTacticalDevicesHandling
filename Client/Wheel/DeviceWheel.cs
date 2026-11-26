@@ -186,15 +186,30 @@ internal sealed class DeviceWheel : InputNode
         }
 
         Select(PointedTile());
-        if (_selected != null && Input.GetMouseButtonDown(0))
+        if (!Input.GetMouseButtonDown(0))
+        {
+            return;
+        }
+
+        if (_selected != null)
         {
             Apply(_selected);
         }
+        else if (Plugin.Activation.Value == WheelActivation.Toggle && IsPointerInCentre())
+        {
+            // Left mouse is also fire: closing on release keeps the click from reaching the weapon.
+            CloseOnRelease(KeyCode.Mouse0);
+        }
     }
+
+    private Vector2 PointerOffset() =>
+        ((Vector2)Input.mousePosition - new Vector2(Screen.width, Screen.height) * 0.5f) / _canvas.scaleFactor;
+
+    private bool IsPointerInCentre() => PointerOffset().magnitude < DeadZone;
 
     private WheelTile PointedTile()
     {
-        Vector2 offset = ((Vector2)Input.mousePosition - new Vector2(Screen.width, Screen.height) * 0.5f) / _canvas.scaleFactor;
+        Vector2 offset = PointerOffset();
         if (offset.magnitude < DeadZone)
         {
             return null;
