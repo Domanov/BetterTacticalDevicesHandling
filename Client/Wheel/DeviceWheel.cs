@@ -64,6 +64,11 @@ internal sealed class DeviceWheel : InputNode
         }
 
         List<TacticalDevice> devices = TacticalDevice.Collect(translator._controller.Item, player.HandsController.ControllerGameObject.transform);
+        if (Plugin.LogModes.Value && player.HandsController is Player.FirearmController firearm)
+        {
+            DeviceDiagnostics.Log(firearm.Firearms, devices);
+        }
+
         if (devices.Count == 0)
         {
             return;
@@ -274,6 +279,7 @@ internal sealed class DeviceWheel : InputNode
         }
 
         _translator._controller.SetLightsState(states, false, true);
+
         foreach (WheelTile t in _tiles)
         {
             t.Refresh();

@@ -40,6 +40,7 @@ public class Plugin : BaseUnityPlugin
         new InspectShowPatch().Enable();
         new InspectClosePatch().Enable();
         new PreviewBuiltPatch().Enable();
+        new FirearmsBeamsPatch().Enable();
         Log.LogInfo($"{Name} {Version} loaded");
     }
 
