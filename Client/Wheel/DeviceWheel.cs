@@ -185,7 +185,10 @@ internal sealed class DeviceWheel : InputNode
             return;
         }
 
-        Select(PointedTile());
+        bool toggle = Plugin.Activation.Value == WheelActivation.Toggle;
+        WheelTile underPointer = TileUnderPointer();
+        WheelTile pointed = toggle ? underPointer : PointedTile();
+        Select(pointed is { IsEmpty: false } ? pointed : null);
         if (!Input.GetMouseButtonDown(0))
         {
             return;
@@ -195,21 +198,31 @@ internal sealed class DeviceWheel : InputNode
         {
             Apply(_selected);
         }
-        else if (Plugin.Activation.Value == WheelActivation.Toggle && IsPointerInCentre())
+        else if (toggle && underPointer == null)
         {
             // Left mouse is also fire: closing on release keeps the click from reaching the weapon.
             CloseOnRelease(KeyCode.Mouse0);
         }
     }
 
-    private Vector2 PointerOffset() =>
-        ((Vector2)Input.mousePosition - new Vector2(Screen.width, Screen.height) * 0.5f) / _canvas.scaleFactor;
+    // Toggle mode picks the box under the cursor, so a click outside every box can close the wheel.
+    private WheelTile TileUnderPointer()
+    {
+        foreach (WheelTile tile in _tiles)
+        {
+            if (tile.Contains(Input.mousePosition))
+            {
+                return tile;
+            }
+        }
 
-    private bool IsPointerInCentre() => PointerOffset().magnitude < DeadZone;
+        return null;
+    }
 
+    // Hold mode picks by direction from the centre, so a quick flick towards a tile is enough.
     private WheelTile PointedTile()
     {
-        Vector2 offset = PointerOffset();
+        Vector2 offset = ((Vector2)Input.mousePosition - new Vector2(Screen.width, Screen.height) * 0.5f) / _canvas.scaleFactor;
         if (offset.magnitude < DeadZone)
         {
             return null;

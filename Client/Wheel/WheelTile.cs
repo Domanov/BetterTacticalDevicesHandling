@@ -46,6 +46,10 @@ internal sealed class WheelTile
 
     public bool IsEmpty => Content == null;
 
+    // The wheel canvas is screen-space overlay, so no camera.
+    public bool Contains(Vector2 screenPoint) =>
+        RectTransformUtility.RectangleContainsScreenPoint(_background.rectTransform, screenPoint, null);
+
     public void SetSelected(bool selected)
     {
         _selected = selected;
