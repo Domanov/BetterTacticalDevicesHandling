@@ -1,3 +1,4 @@
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -26,6 +27,7 @@ public class Plugin : BaseUnityPlugin
     internal static ConfigEntry<bool> LogModes;
 
     private KeyCode _wheelKey;
+    private KeyCode[] _wheelModifiers;
 
     private void Awake()
     {
@@ -47,17 +49,32 @@ public class Plugin : BaseUnityPlugin
         Log.LogInfo($"{Name} {Version} loaded");
     }
 
-    // Update is the only per-frame work: it stays off without a wheel key, and the full shortcut check
-    // (modifier keys) only runs on the frame the main key goes down.
+    // Update is the only per-frame work: it stays off without a wheel key, and the modifier check only runs
+    // on the frame the main key goes down.
     private void CacheWheelKey()
     {
         _wheelKey = WheelKey.Value.MainKey;
+        _wheelModifiers = WheelKey.Value.Modifiers.ToArray();
         enabled = _wheelKey != KeyCode.None;
+    }
+
+    // KeyboardShortcut.IsDown fails while any other key is held, so the wheel wouldn't open while moving.
+    private bool WheelModifiersHeld()
+    {
+        foreach (KeyCode modifier in _wheelModifiers)
+        {
+            if (!Input.GetKey(modifier))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(_wheelKey) && WheelKey.Value.IsDown())
+        if (Input.GetKeyDown(_wheelKey) && WheelModifiersHeld())
         {
             DeviceWheel.Toggle();
         }
