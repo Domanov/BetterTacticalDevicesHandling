@@ -16,7 +16,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string Guid = "com.dmnv.bettertacticaldeviceshandling";
     public const string Name = "Dmnv-BetterTacticalDevicesHandling";
-    public const string Version = "1.1.0";
+    public const string Version = "1.1.1";
 
     internal static ManualLogSource Log;
     internal static ConfigEntry<KeyboardShortcut> WheelKey;
